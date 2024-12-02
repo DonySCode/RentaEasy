@@ -1,28 +1,43 @@
+using Microsoft.EntityFrameworkCore;
+using RentaEasy.Application.Services;
+using RentaEasy.Core.Interfaces;
+using RentaEasy.Infrastructure.Data;
+using RentaEasy.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Configure EF Core with In-Memory Database
+builder.Services.AddDbContext<RentaEasyDbContext>(options =>
+    options.UseInMemoryDatabase("RentaEasyDb"));
+
+// Register repositories and services
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<PropertyService>();
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+//builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseDefaultFiles();
-app.MapStaticAssets();
+// Use CORS
+app.UseCors("AllowAll");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+// Enable Swagger for API documentation
+//app.UseSwagger();
+//app.UseSwaggerUI();
 
 app.MapControllers();
-
-app.MapFallbackToFile("/index.html");
-
 app.Run();

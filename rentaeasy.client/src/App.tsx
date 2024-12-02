@@ -1,58 +1,111 @@
-import { useEffect, useState } from 'react';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+interface Property {
+    id?: string;
+    name: string;
+    address: string;
 }
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+    const [properties, setProperties] = useState<Property[]>([]);
+    const [newProperty, setNewProperty] = useState<Property>({ name: "", address: "" });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        populateWeatherData();
+        fetchProperties();
     }, []);
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
+    const fetchProperties = async () => {
+        const response = await fetch("api/properties");
+        if (response.ok) {
+            const data = await response.json();
+            setProperties(data);
+        }
+        setLoading(false);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewProperty((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAddProperty = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const response = await fetch("api/properties", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newProperty),
+        });
+        if (response.ok) {
+            const addedProperty = await response.json();
+            setProperties((prev) => [...prev, addedProperty]);
+            setNewProperty({ name: "", address: "" }); // Reset form
+        }
+    };
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+            <h1>RentaEasy Properties</h1>
+
+            <section>
+                <h2>Add a New Property</h2>
+                <form onSubmit={handleAddProperty}>
+                    <div>
+                        <label htmlFor="name">Name:</label>
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={newProperty.name}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="address">Address:</label>
+                        <input
+                            id="address"
+                            name="address"
+                            type="text"
+                            value={newProperty.address}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <button type="submit">Add Property</button>
+                </form>
+            </section>
+
+            <section>
+                <h2>Current Properties</h2>
+                {loading ? (
+                    <p>Loading properties...</p>
+                ) : properties.length > 0 ? (
+                    <table className="table table-striped" aria-labelledby="tableLabel">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {properties.map((property) => (
+                                <tr key={property.id}>
+                                    <td>{property.name}</td>
+                                    <td>{property.address}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>No properties available. Add a property to get started.</p>
+                )}
+            </section>
         </div>
     );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
 }
 
 export default App;
