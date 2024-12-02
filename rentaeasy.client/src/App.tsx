@@ -17,7 +17,7 @@ function App() {
     }, []);
 
     const fetchProperties = async () => {
-        const response = await fetch("api/properties");
+        const response = await fetch("http://localhost:5002/api/property");
         if (response.ok) {
             const data = await response.json();
             setProperties(data);
@@ -32,7 +32,7 @@ function App() {
 
     const handleAddProperty = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await fetch("api/properties", {
+        const response = await fetch("http://localhost:5002/api/property", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
