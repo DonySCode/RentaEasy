@@ -1,0 +1,6 @@
+@RentaEasy.Server_HostAddress = http://localhost:5002
+
+GET {{RentaEasy.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
