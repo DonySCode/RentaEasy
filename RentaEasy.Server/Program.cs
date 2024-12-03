@@ -14,7 +14,7 @@ builder.Services.AddDbContext<RentaEasyDbContext>(options =>
     options.UseInMemoryDatabase("RentaEasyDb"));
 
 // Register repositories and services
-builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<IPropertiesRepository, PropertiesRepository>();
 builder.Services.AddScoped<PropertyService>();
 
 // Configure CORS

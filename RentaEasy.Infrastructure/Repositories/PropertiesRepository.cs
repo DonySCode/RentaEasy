@@ -6,21 +6,31 @@ using RentaEasy.Infrastructure.Data;
 
 namespace RentaEasy.Infrastructure.Repositories
 {
-    public class PropertyRepository : IPropertyRepository
+    public class PropertiesRepository : IPropertiesRepository
     {
         private readonly RentaEasyDbContext _context;
 
-        public PropertyRepository(RentaEasyDbContext context)
+        public PropertiesRepository(RentaEasyDbContext context)
         {
             _context = context;
         }
 
         public IEnumerable<Property> GetAllProperties() => _context.Properties.ToList();
 
+        public Property? GetPropertyById(int id) => _context.Properties.FirstOrDefault(p => p.Id == id);
+
         public void AddProperty(Property property)
         {
             _context.Properties.Add(property);
             _context.SaveChanges();
         }
+
+        public void UpdateProperty(Property property)
+        {
+            _context.Properties.Update(property);
+            _context.SaveChanges();
+        }
+
+        public void DeleteProperty(int id) => _context.Properties.Remove(GetPropertyById(id));
     }
 }

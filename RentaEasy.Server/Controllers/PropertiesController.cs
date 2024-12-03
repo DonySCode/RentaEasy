@@ -6,14 +6,16 @@ namespace RentaEasy.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PropertyController : ControllerBase
+    public class PropertiesController : ControllerBase
     {
         private readonly PropertyService _service;
 
-        public PropertyController(PropertyService service)
+        public PropertiesController(PropertyService service)
         {
             _service = service;
         }
+        [HttpGet("{id}")]
+        public IActionResult GetPropery(int id) => Ok(_service.GetPropertyById(id));
 
         [HttpGet]
         public IActionResult GetProperties() => Ok(_service.GetAllProperties());
@@ -23,6 +25,19 @@ namespace RentaEasy.Server.Controllers
         {
             _service.AddProperty(property);
             return CreatedAtAction(nameof(GetProperties), property);
+        }
+
+        [HttpPut]
+        public IActionResult UpdateProperty([FromBody] Property property)
+        {
+            _service.UpdateProperty(property);
+            return CreatedAtAction(nameof(GetProperties), property);
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProperty(int id)
+        {
+            _service.DeleteProperty(id);
+            return NoContent();
         }
     }
 }

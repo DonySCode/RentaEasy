@@ -19,9 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RentaEasy.Application\RentaEasy.Application.csproj" />
-    <ProjectReference Include="..\rentaeasy.client\rentaeasy.client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\RentaEasy.Infrastructure\RentaEasy.Infrastructure.csproj" />
   </ItemGroup>
 
