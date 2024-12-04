@@ -20,6 +20,6 @@ namespace RentaEasy.Application.Services
 
         public void UpdateProperty(Property property) => _repository.UpdateProperty(property);
 
-        public void DeleteProperty(int id) => _repository.DeleteProperty(id);
+        public void DeleteProperty(int id) => _repository.DeleteProperty(GetPropertyById(id));
     }
 }

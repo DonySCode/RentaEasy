@@ -31,6 +31,6 @@ namespace RentaEasy.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public void DeleteProperty(int id) => _context.Properties.Remove(GetPropertyById(id));
+        public void DeleteProperty(Property property) => _context.Properties.Remove(property);
     }
 }

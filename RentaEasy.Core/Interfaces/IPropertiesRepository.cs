@@ -9,6 +9,6 @@ namespace RentaEasy.Core.Interfaces
         Property? GetPropertyById(int id);
         void AddProperty(Property property);
         void UpdateProperty(Property property);
-        void DeleteProperty(int id);
+        void DeleteProperty(Property property);
     }
 }
