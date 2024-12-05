@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RentaEasy.Application.Services;
 using RentaEasy.Core.Interfaces;
@@ -13,31 +14,19 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<RentaEasyDbContext>(options =>
     options.UseInMemoryDatabase("RentaEasyDb"));
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<RentaEasyDbContext>()
+    .AddDefaultTokenProviders(); 
+
 // Register repositories and services
 builder.Services.AddScoped<IPropertiesRepository, PropertiesRepository>();
 builder.Services.AddScoped<PropertyService>();
 
-// Configure CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
-//builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
-// Use CORS
-app.UseCors("AllowAll");
-
-// Enable Swagger for API documentation
-//app.UseSwagger();
-//app.UseSwaggerUI();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();
